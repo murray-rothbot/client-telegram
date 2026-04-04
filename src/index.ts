@@ -1,18 +1,21 @@
 import { Start } from "./start";
 
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled rejection caught:", reason);
+});
+
 const init = async () => {
   try {
     const client = await Start.Telegram();
-    // if (client) {
-    //   Start.Events({ client });
-    //   Start.Express({ client });
-    //   Start.Schedules({ client });
-    // }
+
+    client.on("polling_error", (error) => {
+      console.error("Polling error:", error.message);
+    });
   } catch (error) {
     console.error(`start: ${error}`);
-    // setTimeout(() => {
-    //   init();
-    // }, 5000);
+    setTimeout(() => {
+      init();
+    }, 1000 * 60);
   }
 };
 
